@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Enable version updates for docker
+  - package-ecosystem: "docker"
+    # Look for `Dockerfile` and `lock` files in the `root` directory
+    directory: "/"
+    # Check the registry for updates every day (weekdays)
+    schedule:
+      interval: "daily"
+    assignees:
+      - "andkrause"
