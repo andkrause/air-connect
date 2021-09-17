@@ -1,4 +1,4 @@
-FROM debian:buster-slim  
+FROM debian:buster-slim AS fetcher
 
 ARG platform=aarch64
 
@@ -9,5 +9,10 @@ WORKDIR /
 RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/bin/aircast-${platform}?raw=true \
      && chmod +x aircast-server
 
+FROM debian:10.10-slim 
+
+WORKDIR /
+
+COPY --from=fetcher /aircast-server /aircast-server
 
 ENTRYPOINT [ "./aircast-server" ]
