@@ -10,7 +10,7 @@ RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/
      && chmod +x aircast-server
 
 FROM debian:10.10-slim 
-RUN  apt-get update && apt-get install -y openssl \
+RUN  apt-get update && apt-get install -y libssl1.1 \
      && rm -rf /var/lib/apt/lists/*
 
 
