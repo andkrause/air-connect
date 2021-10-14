@@ -1,4 +1,4 @@
-FROM debian:buster-slim AS fetcher
+FROM debian:10.10-slim  AS fetcher
 
 ARG platform=aarch64
 
@@ -9,7 +9,10 @@ WORKDIR /
 RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/bin/aircast-${platform}?raw=true \
      && chmod +x aircast-server
 
-FROM debian:buster-slim
+FROM debian:10.10-slim 
+RUN  apt-get update && apt-get install -y openssl \
+     && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /
 
