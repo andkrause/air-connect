@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y wget
 
 WORKDIR /
 
-RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/bin/aircast-linux-${platform}?raw=true \
+RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/bin/aircast-linux-${platform}-static?raw=true \
      && chmod +x aircast-server
 
 FROM debian:11.5-slim 
