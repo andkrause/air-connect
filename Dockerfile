@@ -18,4 +18,4 @@ WORKDIR /
 
 COPY --from=fetcher /aircast-server /aircast-server
 
-ENTRYPOINT [ "./aircast-server" ]
+ENTRYPOINT [ "./aircast-server", "-Z" ]
