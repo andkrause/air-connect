@@ -1,6 +1,6 @@
 FROM debian:12.0-slim  AS fetcher
 
-ARG platform=x86_64
+ARG platform=aarch64
 
 RUN apt-get update && apt-get install -y wget 
 
