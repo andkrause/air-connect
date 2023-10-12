@@ -1,4 +1,4 @@
-FROM debian:12.1-slim  AS fetcher
+FROM debian:12.2-slim  AS fetcher
 
 ARG platform=aarch64
 
@@ -9,7 +9,7 @@ WORKDIR /
 RUN wget -O aircast-server https://github.com/philippe44/AirConnect/blob/master/bin/aircast-linux-${platform}?raw=true \
      && chmod +x aircast-server
 
-FROM debian:12.1-slim 
+FROM debian:12.2-slim 
 RUN  apt-get update && apt-get install -y libssl3 libssl-dev \
      && rm -rf /var/lib/apt/lists/*
 
