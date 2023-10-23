@@ -11,7 +11,7 @@ RUN AIRCAST_URL=$(curl -s https://api.github.com/repos/philippe44/AirConnect/rel
      && wget -O aircast.zip $AIRCAST_URL  \
      && unzip aircast.zip -d ./aircast \
      && rm aircast.zip \
-     && mv ./aircast/aircast-linux-${TARGETPLATFORM} aircast-server \
+     && mv ./aircast/aircast-linux-${platform} aircast-server \
      && chmod +x aircast-server 
 
 
