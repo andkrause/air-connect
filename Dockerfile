@@ -1,4 +1,4 @@
-FROM debian:12.6-slim  AS fetcher
+FROM debian:12.7-slim  AS fetcher
 
 ARG platform=aarch64
 
@@ -15,7 +15,7 @@ RUN AIRCAST_URL=$(curl -s https://api.github.com/repos/philippe44/AirConnect/rel
      && chmod +x aircast-server 
 
 
-FROM debian:12.6-slim 
+FROM debian:12.7-slim 
 RUN  apt-get update && apt-get install -y libssl3 libssl-dev \
      && rm -rf /var/lib/apt/lists/*
 
