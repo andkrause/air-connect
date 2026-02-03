@@ -7,8 +7,6 @@ on:
       - README.md
   release:
     types: [published]
-  schedule:
-   - cron:  '0 0 * * *'
 jobs:
   buildx:
     runs-on: ubuntu-latest

@@ -6,14 +6,17 @@ RUN apt-get update && apt-get install -y wget curl jq unzip
 
 WORKDIR /
 
-RUN AIRCAST_URL=$(curl -s https://api.github.com/repos/philippe44/AirConnect/releases/latest | jq -c -r '.assets[] | select(.name | test("AirConnect-\\d+\\.\\d+\\.\\d+\\.zip")).browser_download_url') \
+# 1. Copy the AIRCAST_URL file into the build context
+COPY AIRCAST_URL /AIRCAST_URL
+
+# 2. Read the URL from the file and proceed with the download
+RUN AIRCAST_URL=$(cat /AIRCAST_URL | tr -d '\n\r') \
      && mkdir ./aircast \
-     && wget -O aircast.zip $AIRCAST_URL  \
+     && wget -O aircast.zip "$AIRCAST_URL" \
      && unzip aircast.zip -d ./aircast \
      && rm aircast.zip \
      && mv ./aircast/aircast-linux-${platform} aircast-server \
-     && chmod +x aircast-server 
-
+     && chmod +x aircast-server
 
 FROM debian:13.3-slim 
 RUN  apt-get update && apt-get install -y libssl3 libssl-dev \
