@@ -17,10 +17,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: andy008/air-connect
-          tags: |
-             type=schedule,pattern={{date 'YYYYMMDD'}}
-             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
-             type=semver,pattern={{version}}
       - name: Set up QEMU
         id: qemu
         uses: docker/setup-qemu-action@v3
