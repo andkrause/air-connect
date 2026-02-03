@@ -1,10 +1,9 @@
-name: Check for AirConnect Updates (aircast-aarch64)
+name: Check for AirConnect Updates
 
 on:
   schedule:
-    # Run daily at 6:00 AM UTC
     - cron: "0 6 * * *"
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   check-update:
@@ -20,74 +19,50 @@ jobs:
       - name: Fetch latest AirConnect release info
         id: fetch
         run: |
-          # Fetch the latest release JSON from GitHub API
+          # Fetch release JSON
           RELEASE_JSON=$(curl -sL -H "User-Agent: check-update-action" "https://api.github.com/repos/philippe44/AirConnect/releases/latest")
           
-          # Extract the version (tag_name)
+          # Extract version
           VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
           
-          # Extract the download URL specifically for 'aircast' on 'aarch64'
-          # This filter checks if the name contains BOTH "aarch64" AND "aircast"
-          NEW_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | contains("aarch64") and contains("aircast")) | .browser_download_url' | head -1)
+          # Find the ZIP asset (e.g., AirConnect-1.9.3.zip)
+          # This regex looks for 'AirConnect-' followed by digits and dots, ending in '.zip'
+          NEW_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("AirConnect-[0-9.]+zip")) | .browser_download_url' | head -1)
           
           if [ -z "$NEW_URL" ] || [ "$NEW_URL" == "null" ]; then
-            echo "Error: No aircast-aarch64 asset found in the latest release."
+            echo "Error: Could not find the AirConnect ZIP asset."
             exit 1
           fi
           
           echo "new_url=$NEW_URL" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Found latest version: $VERSION"
-          echo "Download URL: $NEW_URL"
 
       - name: Check if update is needed
         id: check
         run: |
-          if [ ! -f AIRCAST_URL ]; then
-            touch AIRCAST_URL
-          fi
-
-          CURRENT_URL=$(cat AIRCAST_URL | tr -d '\n\r' | head -1)
+          if [ ! -f AIRCAST_URL ]; then touch AIRCAST_URL; fi
+          CURRENT_URL=$(cat AIRCAST_URL | tr -d '\n\r')
           NEW_URL="${{ steps.fetch.outputs.new_url }}"
           
-          echo "Current URL: $CURRENT_URL"
-          echo "New URL: $NEW_URL"
-          
           if [ "$CURRENT_URL" = "$NEW_URL" ]; then
-            echo "No update needed"
             echo "needs_update=false" >> $GITHUB_OUTPUT
           else
-            echo "Update available!"
             echo "needs_update=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Update AIRCAST_URL file
         if: steps.check.outputs.needs_update == 'true'
-        run: |
-          echo "${{ steps.fetch.outputs.new_url }}" > AIRCAST_URL
+        run: echo "${{ steps.fetch.outputs.new_url }}" > AIRCAST_URL
 
       - name: Create Pull Request
         if: steps.check.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: update aircast (aarch64) to ${{ steps.fetch.outputs.version }}"
-          title: "Update aircast (aarch64) to ${{ steps.fetch.outputs.version }}"
-          body: |
-            This PR updates the **aircast** (aarch64) binary URL to version **${{ steps.fetch.outputs.version }}**.
-            
-            **New download URL:**
-            ```
-            ${{ steps.fetch.outputs.new_url }}
-            ```
-            
-            This update was automatically detected from [GitHub Releases](https://github.com/philippe44/AirConnect/releases).
-            
-            ---
-            *This PR was automatically created by the AirConnect update checker workflow.*
-          branch: update-aircast-${{ steps.fetch.outputs.version }}
+          commit-message: "chore: update AirConnect to ${{ steps.fetch.outputs.version }}"
+          title: "Update AirConnect to ${{ steps.fetch.outputs.version }}"
+          body: "Automated update to the latest AirConnect ZIP: ${{ steps.fetch.outputs.new_url }}"
+          branch: update-airconnect-${{ steps.fetch.outputs.version }}
           delete-branch: true
           assignees: "andkrause"
-          labels: |
-            dependencies
-            automated

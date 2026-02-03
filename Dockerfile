@@ -9,14 +9,14 @@ WORKDIR /
 # 1. Copy the AIRCAST_URL file into the build context
 COPY AIRCAST_URL /AIRCAST_URL
 
-# 2. Read the URL from the file and proceed with the download
+# 2. Download, unzip, and move the specific aarch64 binary
 RUN AIRCAST_URL=$(cat /AIRCAST_URL | tr -d '\n\r') \
      && mkdir ./aircast \
-     && wget -O aircast.zip "$AIRCAST_URL" \
+     && wget -O aircast.zip $AIRCAST_URL  \
      && unzip aircast.zip -d ./aircast \
      && rm aircast.zip \
      && mv ./aircast/aircast-linux-${platform} aircast-server \
-     && chmod +x aircast-server
+     && chmod +x aircast-server 
 
 FROM debian:13.3-slim 
 RUN  apt-get update && apt-get install -y libssl3 libssl-dev \
