@@ -1,4 +1,4 @@
-FROM debian:13.3-slim  AS fetcher
+FROM debian:13.4-slim  AS fetcher
 
 ARG platform=aarch64
 
@@ -18,7 +18,7 @@ RUN AIRCAST_URL=$(cat /AIRCAST_URL | tr -d '\n\r') \
      && mv ./aircast/aircast-linux-${platform} aircast-server \
      && chmod +x aircast-server 
 
-FROM debian:13.3-slim 
+FROM debian:13.4-slim 
 RUN  apt-get update && apt-get install -y libssl3 libssl-dev \
      && rm -rf /var/lib/apt/lists/*
 
